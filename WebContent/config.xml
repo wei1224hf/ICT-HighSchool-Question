@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [<!ELEMENT root ANY><!ELEMENT item ANY><!ATTLIST item ID ID #REQUIRED><!ATTLIST item Explanation CDATA #IMPLIED>]>
+<root>
+	<item ID="APPPATH">C:\Users\Administrator\git\ICT-HighSchool-Question\WebContent\</item>
+	<item ID="IL8N" Explanation="Language must fit the folder name in WebContent/language/">zh-cn</item>
+	<item ID="PAPER_FILE_PATH">file\upload\paper\exam_paper_multionline_high_2_chinese.xls</item>
+</root>
