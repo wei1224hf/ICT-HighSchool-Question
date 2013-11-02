@@ -7,7 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -17,8 +21,46 @@ import org.dom4j.DocumentHelper;
 
 public class tools {
 
-	public static HashMap il8n = null;
+	public static Connection getExcelConn(){
+		Connection conn = null;
+		try {
+			String driver = "com.hxtt.sql.excel.ExcelDriver";
+			Class.forName(driver).newInstance();  
+			String protocol = "jdbc:excel";  
+			String database = tools.getConfigItem("APPPATH")+""+tools.getConfigItem("PAPER_FILE_PATH");  
+			
+			String url = protocol + ":/" + database;
+			//url= url.replace("\\", "\\\\");
+			System.out.println(url);
+			conn = DriverManager.getConnection(url);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}  
 
+		return conn;	
+	}
+	
+	private static String dbType = null;
+	public static Connection getConn(){
+		if(tools.dbType==null){
+			tools.dbType = tools.getConfigItem("DB_TYPE");
+		}
+		
+		if(tools.dbType.equals("excel")){
+			return tools.getExcelConn();
+		}
+		else{
+			return null;
+		}
+	}
+	
+	public static HashMap il8n = null;
 	public static HashMap readIl8n() {
 		if (tools.il8n == null) {
 			tools.il8n = new HashMap();
@@ -137,10 +179,10 @@ public class tools {
 
 	public static Document configXML = null;
 	public static String configXMLFileName = "config.xml";
-
 	public static String getConfigItem(String id) {
 		String item = "";
 		if (tools.configXML == null || id.equals("reLoad")) {
+			tools.dbType = null;
 			try {
 				String path = tools.class.getClassLoader().getResource("")
 						+ "../../" + tools.configXMLFileName;
@@ -166,6 +208,37 @@ public class tools {
 		}
 		item = tools.configXML.elementByID(id).getText();
 
+		return item;
+	}
+	
+	public static Document sqlXML = null;
+	public static String getSQL(String id) {
+		String item = "";
+		if (tools.sqlXML == null) {
+			try {
+				String path = tools.class.getClassLoader().getResource("")
+						+ "../../sql.xml";
+				if(System.getProperty("os.name").contains("Windows")){
+					path = path.substring(6);
+				}else{
+					path = path.substring(5);
+				}
+				File file = new File(path);
+				StringBuffer buffer = new StringBuffer();
+				InputStreamReader isr = new InputStreamReader(
+						new FileInputStream(file), "utf-8");
+				BufferedReader br = new BufferedReader(isr);
+				int s;
+				while ((s = br.read()) != -1) {
+					buffer.append((char) s);
+				}
+				tools.sqlXML = DocumentHelper.parseText( buffer.toString() );
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		item = tools.sqlXML.elementByID(id).getText();
 		return item;
 	}
 
@@ -304,6 +377,21 @@ public class tools {
 	}
 
 	public static void main(String args[]){
-		System.out.println(tools.getConfigItem("APPPATH")+""+tools.getConfigItem("PAPER_FILE_PATH"));
+//		System.out.println(tools.getConfigItem("APPPATH")+""+tools.getConfigItem("PAPER_FILE_PATH"));
+		Connection conn = tools.getExcelConn();
+		try {
+			Statement stmt = conn.createStatement();
+			String sql = "select * from exam_question";
+			ResultSet rest = stmt.executeQuery(sql);
+			while(rest.next()){
+				System.out.println(rest.getString("id")+" "+rest.getString("id_parent")+" "+rest.getString("title"));
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 	}
 }

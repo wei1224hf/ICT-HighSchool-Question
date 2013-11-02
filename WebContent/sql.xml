@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE root [<!ELEMENT root ANY><!ELEMENT item ANY><!ATTLIST item ID ID #REQUIRED><!ATTLIST item Explanation CDATA #IMPLIED>]>
+<root>
+	<item ID="exam_question">
+		<item ID="exam_question__grid">
+			select * from exam_question
+			__WHERE__
+			__ORDER__
+		</item>
+	</item>
+</root>

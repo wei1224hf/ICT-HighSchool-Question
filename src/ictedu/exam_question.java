@@ -1,19 +1,17 @@
 package ictedu;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.gson.Gson;
-
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
 
 public class exam_question {
 	
@@ -21,9 +19,10 @@ public class exam_question {
 		String functionName = (String) request.getParameter("function");
 		String executor = (String)request.getParameter("executor");
 		String session = (String)request.getParameter("session");
+		
 		Hashtable t_return = new Hashtable();
 		if (functionName.equals("grid")) {	
-			String sortname = "code";
+			String sortname = "id";
 			String sortorder = "asc";
 			if( request.getParameter("sortname") != null ){
 				sortname = (String) request.getParameter("sortname");
@@ -40,86 +39,148 @@ public class exam_question {
 				,sortorder
 				);	
 		}
+		else if (functionName.equals("loadConfig")) {
+			t_return = loadConfig();
+		}
+		
 		return t_return;
 	} 
 	
+	public static Hashtable loadConfig() {
+		Hashtable t_return = new Hashtable();
+		Connection conn = conn = tools.getConn();
+		Statement stmt = null;
+		ResultSet rset = null;
+		ArrayList a = null;
+		
+		try {
+			stmt = conn.createStatement();
+			String sql = "select code,title as value from exam_subject ";
+			rset = stmt.executeQuery(sql);
+			a = new ArrayList();
+			while (rset.next()) {			
+				Hashtable t = new Hashtable();	
+				t.put("code", rset.getString("code"));
+				t.put("value", rset.getString("value"));			
+				a.add(t);
+			}
+			t_return.put("exam_subject", a);	
+		} catch (SQLException e) {
+			e.printStackTrace();
+			t_return.put("msg", e.toString());		
+		} finally {
+	        try { if (rset != null) rset.close(); } catch(Exception e) { }
+	        try { if (stmt != null) stmt.close(); } catch(Exception e) { }
+	        try { if (conn != null) conn.close(); } catch(Exception e) { }
+	    }		
+	
+
+		return t_return;
+	}
+	
+	private static String search(
+			String search
+			,String user_type
+			,String executor
+			,String group_code
+			){
+		String where = " where 1=1 ";
+
+		Hashtable search_t = (Hashtable) new Gson().fromJson(search, Hashtable.class);
+		for (Iterator it = search_t.keySet().iterator(); it.hasNext();) {
+			String key = (String) it.next();
+			Object value = search_t.get(key);
+			if(key.equals("name")){
+				where += " and government_resident.name like '%"+value+"%'";
+			}
+			if(key.equals("type")){
+				where += " and government_resident.type = '"+value+"'";
+			}
+			if(key.equals("status")){
+				where += " and government_resident.status = '"+value+"'";
+			}
+			if(key.equals("zone_10")){
+				where += " and government_resident.code like '"+value+"%'";
+			}
+			if(key.equals("building")){
+				where += " and government_resident.code like '"+value+"%'";
+			}		
+			if(key.equals("family")){
+				where += " and government_resident.code like '"+value+"%'";
+			}
+		}
+		
+		if(group_code.length()>2){//非系统用户
+			String[] group_code_ = group_code.split("-");
+			where += " and government_resident.code like '"+group_code_[0]+"%'";
+		}
+		
+		return where;
+	}
+	
+	public static String[] types = {"单选题","多选题","判断题","填空","组合","简答","题纲"};
 	public static Hashtable grid(
 			 String search
 			,String pagesize
 			,String pagenum
 			,String executor
 			,String sortname
-			,String sortorder) {
+			,String sortorder) {		
 		Hashtable t_return = new Hashtable();
-		String filePath = tools.getConfigItem("APPPATH")+""+tools.getConfigItem("PAPER_FILE_PATH");
-		InputStream fs = null;
-		Workbook workBook = null;
-		Sheet sheet = null;
-		int columns,rows,startRow,endRow = 0;
 		
+		String sql = tools.getSQL("exam_question__grid");
+		String orderby = " order by "+sortname+" "+sortorder;
+		String where = search(search,"",executor,"");	
+		int startRow = (Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) );
+		int endRow = startRow+Integer.valueOf(pagesize);
+		
+		sql = sql.replace("__WHERE__", where);
+		sql = sql.replace("__ORDER__", orderby);
+		
+		Statement stmt = null;
+		ResultSet rest = null;
+		Connection conn = tools.getConn();
+		ArrayList a_rows = new ArrayList();
 		try {
-			fs = new FileInputStream(filePath);
-			workBook = Workbook.getWorkbook(fs);
-		} catch (FileNotFoundException e) {
+			stmt = tools.getConn().createStatement();
+			System.out.println(sql);
+			rest = stmt.executeQuery(sql);
+			ResultSetMetaData rsData = rest.getMetaData();
+			int rowIndex = 0;
+			while (rest.next()) {
+				rowIndex ++;
+				if(!(rowIndex>startRow && rowIndex<=endRow))continue;
+				System.out.print(rowIndex+" "+startRow+" "+endRow);
+				Hashtable t = new Hashtable();	
+				for(int i=1;i<=rsData.getColumnCount();i++){
+					if(rest.getString(rsData.getColumnLabel(i)) != null){
+						t.put(rsData.getColumnLabel(i), rest.getString(rsData.getColumnLabel(i)));
+					}else{
+						t.put(rsData.getColumnLabel(i), "-");
+					}
+				}
+				t.put("type_", types[Integer.valueOf((String)t.get("type"))-1] );
+				a_rows.add(t);
+			}
+			t_return.put("Rows", a_rows);
+			
+			String sql_total = "select count(*) as count_ from exam_question " + where;
+			rest = stmt.executeQuery(sql_total);
+			rest.next();
+			t_return.put("Total", rest.getInt("count_")-1);
+		} catch (SQLException e) {
 			e.printStackTrace();
-	 		t_return.put("status", "2");
-	 		t_return.put("msg", "Excel path wrong");
-	 		return t_return;
-        } catch (BiffException e) {
-        	e.printStackTrace();
-        } catch (IOException e) {
-        	e.printStackTrace();
-        }		
-		
-        sheet = workBook.getSheet("exam_question");
-        rows = sheet.getRows();
-        if(rows>20000){
-    		t_return.put("status", "2");
-    		t_return.put("msg", "row count must be less than 20000 , your rows:"+rows);
-    		return t_return;
+		} finally {
+            try { if (rest != null) rest.close(); } catch(Exception ex) { }
+            try { if (stmt != null) stmt.close(); } catch(Exception ex) { }
+            try { if (conn != null) conn.close(); } catch(Exception ex) { }
         }
-        
-        ArrayList a_questions = new ArrayList();
-        startRow = (Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-1) )+1;
-        endRow = (Integer.valueOf(pagesize) * (Integer.valueOf(pagenum)-0) )+1;
-        endRow = (endRow>rows)?rows:endRow;
-        System.out.println(startRow+" "+endRow);
-        Hashtable t_row = null;
-        for(int i=startRow;i<endRow;i++){
-        	t_row = new Hashtable();
-        	int column = 0;
-        	t_row.put("id", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("id_parent", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("cent", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("type2", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("type", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("subject_code", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("title", sheet.getCell(column,i).getContents().trim().replace("\n", "<br/>"));column++;
-        	t_row.put("option_length", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("option_1", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("option_2", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("option_3", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("option_4", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("option_5", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("option_6", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("option_7", sheet.getCell(column,i).getContents());column++;
-        	t_row.put("answer", sheet.getCell(column,i).getContents().trim());column++;
-        	t_row.put("description", sheet.getCell(column,i).getContents().trim());column++;
-        	t_row.put("knowledge", sheet.getCell(column,i).getContents().trim());column++;
-        	t_row.put("difficulty", sheet.getCell(column,i).getContents().trim());column++;
-        	t_row.put("path_listen", sheet.getCell(column,i).getContents().trim());column++;
-        	t_row.put("path_img", sheet.getCell(column,i).getContents().trim());column++;
-        	
-        	a_questions.add(t_row);
-        }
-        t_return.put("Rows", a_questions);
-        t_return.put("Total", rows-1);
-		
+
 		return t_return;
 	}	
 	
 	public static void main(String args[]){
-		Hashtable t = exam_question.grid("", "20", "1", "", "", "");
+		Hashtable t = exam_question.grid("{}", "20", "1", "", "id", "desc");
 		System.out.println(new Gson().toJson(t));
 	}
 }
