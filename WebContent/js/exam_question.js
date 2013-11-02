@@ -45,8 +45,9 @@ var exam_question = {
 				    			 }
 				    		 }
 				    	 }}
-				    ,{ display: getIl8n("title"), name: 'title', width: 100 }
+				    ,{ display: getIl8n("title"), name: 'title', width: 250 }
 				    ,{ display: getIl8n("type"), name: 'type_', width: 100 }
+				    ,{ display: getIl8n("exam_question","difficulty"), name: 'difficulty', width: 100 }
 			    
 				],  pageSize:20 ,rownumbers:true
 				,parms : {
@@ -66,23 +67,27 @@ var exam_question = {
 		}	
 		
 		//配置列表表头的按钮,根据当前用户的权限来初始化
-		var permission = [];
-		for(var i=0;i<top.basic_user.permission.length;i++){
-			if(top.basic_user.permission[i].code=='52'){
-				permission = top.basic_user.permission[i].children;
-				for(var j=0;j<permission.length;j++){
-					if(permission[j].code=='5202'){
-						permission = permission[j].children;
-					}
-				}				
-			}
-		}
+		var permission = [
+		     {code:"600701",name:"查询"}
+		    ,{code:"600702",name:"查看"}
+		    ,{code:"600711",name:"导入"}
+		    ,{code:"600712",name:"导出"}
+		    ,{code:"600713",name:"word导出"}
+		    ,{code:"600722",name:"修改"}
+		    ,{code:"600723",name:"删除"}
+		    ,{code:"600790",name:"练习"}		    
+		];
+
 		for(var i=0;i<permission.length;i++){
 			var theFunction = null;
-			if(permission[i].code=='520201'){
-				//查询
+			var actionCode = permission[i].code;
+			
+			actionCode = actionCode.substring(actionCode.length-2,actionCode.length);
+			permission[i].icon = "../file/icon16X16/"+actionCode+"_16X16.gif";
+			if(actionCode=='01'){
 				theFunction = exam_question.search;
-			}else if(permission[i].code=='520202'){
+			}
+			else if(actionCode=='02'){
 				//查看
 				theFunction = function(){
 					var selected = exam_question.grid_getSelectOne();
@@ -112,15 +117,18 @@ var exam_question = {
 			            g._removeDialog();
 			            top.$.ligerui.remove(top.$.ligerui.get("exam_question__view_"+selected.id));
 			        };
-				}
+				};
 				
-			}else if(permission[i].code=='520211'){
+			}
+			else if(actionCode=='11'){
 				//导入
 				theFunction = exam_question.upload;
-			}else if(permission[i].code=='520212'){
+			}
+			else if(actionCode=='12'){
 				//导出
 				theFunction = exam_question.download;
-			}else if(permission[i].code=='520221'){
+			}
+			else if(actionCode=='21'){
 				//添加
 				theFunction = function(){		
 			        	
@@ -144,8 +152,9 @@ var exam_question = {
 			            g._removeDialog();
 			            top.$.ligerui.remove(top.$.ligerui.get("exam_question__add"));
 			        };					
-				}
-			}else if(permission[i].code=='520222'){
+				};
+			}
+			else if(actionCode=='22'){
 				//修改 	                					
 				theFunction = function(){
 	            	if(top.$.ligerui.get("exam_question__modify")){
@@ -174,12 +183,47 @@ var exam_question = {
 			            g._removeDialog();
 			            top.$.ligerui.remove(top.$.ligerui.get("exam_question__modify"));
 			        };						
-				}		
-			}else if(permission[i].code=='520223'){
+				};
+			}
+			else if(actionCode=='23'){
 				//删除
 				theFunction = exam_question.remove;
 				config.checkbox = true;
 			}
+			else if(actionCode=='90'){
+				theFunction = function(){
+					var selected = $.ligerui.get('exam_question__grid').getSelecteds();
+					if(selected.length==0)return;
+					var ids = "";
+					for(var i=0;i<selected.length;i++){
+						ids += selected[i].id+",";
+					}
+					ids = ids.substring(0, ids.length-1);
+					
+					var id = selected.id;
+					top.$.ligerDialog.open({ 
+						url: 'exam_question__do.html?ids='+ids+'&random='+Math.random()
+						,height: 350
+						,width: 400
+						,title: selected.title
+                        ,showMax: true
+                        ,showToggle: true
+                        ,showMin: true
+                        ,isResize: true
+                        ,modal: false
+                        ,slide: false  
+                        ,isHidden:false
+						,id: 'exam_question__do_'
+					}).max();	
+					
+			        top.$.ligerui.get("exam_question__do_").close = function(){
+			            top.$.ligerui.win.removeTask(this);
+			            this.unmask();
+			            this._removeDialog();
+			            top.$.ligerui.remove(this);
+			        };
+				};
+			}			
 			
 			config.toolbar.items.push({line: true });
 			config.toolbar.items.push({
