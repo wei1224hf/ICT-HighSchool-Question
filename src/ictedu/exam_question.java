@@ -70,13 +70,31 @@ public class exam_question {
 			sql = "select code,title as value from exam_subject ";
 			rset = stmt.executeQuery(sql);
 			a = new ArrayList();
+			Hashtable t = null;
 			while (rset.next()) {			
-				Hashtable t = new Hashtable();	
+				t = new Hashtable();	
 				t.put("code", rset.getString("code"));
 				t.put("value", rset.getString("value"));			
 				a.add(t);
 			}
 			t_return.put("exam_subject", a);
+			
+			a = new ArrayList();
+			t = new Hashtable();	
+			t.put("code", "1");t.put("value", "单选");a.add(t);
+			t = new Hashtable();	
+			t.put("code", "2");t.put("value", "多选");a.add(t);
+			t = new Hashtable();	
+			t.put("code", "3");t.put("value", "判断");a.add(t);
+			t = new Hashtable();	
+			t.put("code", "4");t.put("value", "填空");a.add(t);
+			t = new Hashtable();	
+			t.put("code", "5");t.put("value", "组合");a.add(t);
+			t = new Hashtable();	
+			t.put("code", "6");t.put("value", "简答");a.add(t);
+			t = new Hashtable();	
+			t.put("code", "7");t.put("value", "题纲");a.add(t);
+			t_return.put("type", a);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

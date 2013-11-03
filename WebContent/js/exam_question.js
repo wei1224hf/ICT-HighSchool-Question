@@ -33,11 +33,6 @@ var exam_question = {
 		});	
 	}	
 	
-	/**
-	 * 初始化页面列表
-	 * 需要依赖一个空的 document.body 
-	 * 表格的按钮依赖于用户的权限
-	 * */
 	,grid: function(){
 		var config = {
 				id: 'exam_question__grid'
@@ -75,7 +70,6 @@ var exam_question = {
 			config.parms.search = "{}";
 		}	
 		
-		//配置列表表头的按钮,根据当前用户的权限来初始化
 		var permission = [
 		     {code:"600701",name:"查询"}
 		     /*
@@ -99,7 +93,6 @@ var exam_question = {
 				theFunction = exam_question.search;
 			}
 			else if(actionCode=='02'){
-				//查看
 				theFunction = function(){
 					var selected = exam_question.grid_getSelectOne();
 
@@ -132,17 +125,13 @@ var exam_question = {
 				
 			}
 			else if(actionCode=='11'){
-				//导入
 				theFunction = exam_question.upload;
 			}
 			else if(actionCode=='12'){
-				//导出
 				theFunction = exam_question.download;
 			}
 			else if(actionCode=='21'){
-				//添加
 				theFunction = function(){		
-			        	
 					top.$.ligerDialog.open({ 
 						 url: 'exam_question__add.html'
 						,height: 530
@@ -165,8 +154,7 @@ var exam_question = {
 			        };					
 				};
 			}
-			else if(actionCode=='22'){
-				//修改 	                					
+			else if(actionCode=='22'){               					
 				theFunction = function(){
 	            	if(top.$.ligerui.get("exam_question__modify")){
 	            		alert("close first");return;
@@ -197,7 +185,6 @@ var exam_question = {
 				};
 			}
 			else if(actionCode=='23'){
-				//删除
 				theFunction = exam_question.remove;
 				config.checkbox = true;
 			}
@@ -264,20 +251,11 @@ var exam_question = {
 		return selected;
 	}
 	
-	/**
-	 * 删除一个或多个用户
-	 * 如果用户拥有 删除权限 
-	 * 则前端列表必定是一个带 checkBox 的
-	 * */
 	,remove: function(){
-		//判断 ligerGrid 中,被勾选了的数据
 		var selected = $.ligerui.get('exam_question__grid').getSelecteds();
-		//如果一行都没有选中,就报错并退出函数
 		if(selected.length==0){alert(top.getIl8n('noSelect'));return;}
-		//弹框让用户最后确认一下,是否真的需要删除.一旦删除,数据将不可恢复
 		if(confirm( top.getIl8n('sureToDelete') )){
 			var ids = "";
-			//遍历每一行元素,获得 id 
 			for(var i=0; i<selected.length; i++){
 				ids += selected[i].id+",";
 			}
@@ -375,144 +353,77 @@ var exam_question = {
 		});	
 	}
 		
-	/**
-	 * 添加一个用户
-	 * 前端以表单的形式向后台提交数据,服务端AJAX解析入库,
-	 * 服务端还会反馈一些数据,比如 用户编号 等
-	 * */
 	,add: function(){
-
 		var config = {
 			id: 'exam_question__add',
 			fields: [
-				 { display: top.getIl8n('name'), name: "name", type: "text", validate: { required:true } }	
-							
-				
+			     { display: top.getIl8n('title'), name: "title", type: "text", validate: { required:true } }	
+			    ,{ display: top.getIl8n('type'), name: "type", type: "select", options :{data : exam_question.config.type, valueField : "code" , textField: "value" } }
+			    
+			    ,{ display: top.getIl8n('exam_question','cent'), name: "cent", type: "number", validate: { required:true } }	
+				,{ display: top.getIl8n('exam_question','subject_code'), name: "subject_code", type: "select", options :{data : exam_question.config.exam_subject, valueField : "code" , textField: "value" } }
+				,{ display: top.getIl8n('exam_question','answer'), name: "answer", type: "text", validate: { required:true } }	
+				,{ display: top.getIl8n('exam_question','description'), name: "description", type: "text" }	
+				,{ display: top.getIl8n('exam_question','difficulty'), name: "difficulty", type: "number", validate: { required:true }  }	
+				,{ display: top.getIl8n('exam_question','path_listen'), name: "path_listen", type: "text" }	
+				,{ display: top.getIl8n('exam_question','path_img'), name: "path_img", type: "text" }	
 			]
 		};
 		
-		$(document.body).append("<form id='form'></form>");
-		$('#form').ligerForm(config);	
-		$("#person_id").attr("disabled",true);
-		$("li:last",$("#person_id").parent().parent().parent()).css("width","80px").append("&nbsp;<a href='#' onclick='exam_question.addPerson()' >"+ top.getIl8n('exam_question','personInfo')+"</a>");
+		$(document.body).append("<form id='form_add' method='post' name='form_add'></form>");
+		$('#form_add').ligerForm(config);	
 		
-		$('#zone_6').change(function(){
-			var data = $('#zone_6_val').val();
-			$.ajax({
-				url: config_path__exam_question__lowerCodes,
-				data: {
-					code: data
-					,reference: 'zone' 
-					
-					//服务端权限验证所需
-	                ,executor: top.basic_user.loginData.username
-	                ,session: top.basic_user.loginData.session
-				}
-				,type: "POST"
-				,dataType: 'json'
-				,contentType: "application/x-www-form-urlencoded; charset=gb2312"
-				,success: function(response) {
-					liger.get("zone_8").setData(response);
-				},
-				error : function(){
-					
-					alert(top.getIl8n('disConnect'));
-				}
-			});	
-		});
 		
-		$('#zone_8').change(function(){
-			var data = $('#zone_8_val').val();
-			$.ajax({
-				url: config_path__exam_question__lowerCodes,
-				data: {
-					code: data
-					,reference: 'zone' 
-					
-					//服务端权限验证所需
-	                ,executor: top.basic_user.loginData.username
-	                ,session: top.basic_user.loginData.session
-				}
-				,type: "POST"
-				,dataType: 'json'
-				,success: function(response) {
-					liger.get("zone_10").setData(response);
-				},
-				error : function(){
-					
-					alert(top.getIl8n('disConnect'));
-				}
-			});	
-		});		
+		$("[ligeruiid=description]").attr("disabled",true);
+		$("[ligeruiid=description]").parent().css("background-color","#ebebee");
+		$("li:last",$("[ligeruiid=description]").parent().parent().parent()).css("width","80px").append("&nbsp;<a href='#' onclick='exam_question.addContent(\"description\")' ><img src='../file/icon16X16/02_16X16.gif' /></a>");
+		$("[ligeruiid=path_img]").attr("disabled",true);
+		$("[ligeruiid=path_img]").parent().css("background-color","#ebebee");
+		$("li:last",$("[ligeruiid=path_img]").parent().parent().parent()).css("width","80px").append("&nbsp;<a href='#' onclick='exam_question.addPerson()' ><img src='../file/icon16X16/02_16X16.gif' /></a>");
+		$("#[ligeruiid=path_listen]").attr("disabled",true);
+		$("#[ligeruiid=path_listen]").parent().css("background-color","#ebebee");
+		$("li:last",$("#[ligeruiid=path_listen]").parent().parent().parent()).css("width","80px").append("&nbsp;<a href='#' onclick='exam_question.addPerson()' ><img src='../file/icon16X16/02_16X16.gif' /></a>");
 		
-		$('#zone_10').change(function(){
-			var data = $('#zone_10_val').val();
-			$.ajax({
-				url: config_path__exam_question__lowerCodes,
-				data: {
-					 code: data
-					,reference: 'zone' 
-					
-	                ,executor: top.basic_user.loginData.username
-	                ,session: top.basic_user.loginData.session
-				}
-				,type: "POST"
-				,dataType: 'json'
-				,success: function(response) {
-					liger.get("building").setData(response);
-				},
-				error : function(){
-					
-					alert(top.getIl8n('disConnect'));
-				}
-			});	
-		});	
+		$('#form_add').append('<br/><br/><br/><br/><input name="submit" type="submit" value="'+top.getIl8n('submit')+'" id="exam_question__submit" class="l-button l-button-submit" />' );
 		
-		$('#building').change(function(){
-			var data = $('#building_val').val();
-			$.ajax({
-				url: config_path__exam_question__lowerCodes,
-				data: {
-					code: data
-					,reference: 'zone' 
-					
-	                ,executor: top.basic_user.loginData.username
-	                ,session: top.basic_user.loginData.session
-				}
-				,type: "POST"
-				,dataType: 'json'
-				,success: function(response) {
-					liger.get("family").setData(response);
-				},
-				error : function(){
-					
-					alert(top.getIl8n('disConnect'));
-				}
-			});	
-		});					
-		
-		$('#form').append('<br/><br/><br/><br/><input type="submit" value="'+top.getIl8n('submit')+'" id="exam_question__submit" class="l-button l-button-submit" />' );
-
-		var v = $('#form').validate({
+		$.metadata.setType("attr", "validate");
+		var v = $('#form_add').validate({
 			debug: true,
 			errorPlacement: function (lable, element) {
-				if (element.hasClass("l-text-field")) {
-					element.parent().addClass("l-text-invalid");
-				} 
+                if (element.hasClass("l-textarea")) {
+                    element.addClass("l-textarea-invalid");
+                }
+                else if (element.hasClass("l-text-field")) {
+                    element.parent().addClass("l-text-invalid");
+                }
 			},
 			success: function (lable) {
-				var element = $("[ligeruiid="+$(lable).attr('for')+"]",$("form"));
-				if (element.hasClass("l-text-field")) {
-					element.parent().removeClass("l-text-invalid");
-				}
+                var element = $("#" + lable.attr("for"));
+                var nextCell = element.parents("td:first").next("td");
+                if (element.hasClass("l-textarea")) {
+                    element.removeClass("l-textarea-invalid");
+                }
+                else if (element.hasClass("l-text-field")) {
+                    element.parent().removeClass("l-text-invalid");
+                }
 			},
 			submitHandler: function () {
-				if(basic_user.ajaxState)return;
-				basic_user.ajaxState = true;
+				if(exam_question.ajaxState)return;
+				exam_question.ajaxState = true;
 				$("#exam_question__submit").attr("value",top.getIl8n('waitting'));
 				
-				var gisid = getParameter("gisid", window.location.toString() )
-				if(gisid=="")gisid = "0";
+				var data = {};
+				var doms = $("input[type='text']",$('#form_add'));
+				for(var i=0;i<doms.length;i++){
+					var theid = $(doms[i]).attr('ligeruiid');
+					var thetype = $(doms[i]).attr('ltype');                                                        
+				 
+					var thevalue = $.ligerui.get(theid).getValue();
+					if(thetype=='date')thevalue = $('#'+theid).val();
+					if(thevalue!="" && thevalue!=0 && thevalue!="0" && thevalue!=null){
+						eval("data."+theid+"='"+thevalue+"'");
+					}
+				}			
 				
 				$.ajax({
 					url: config_path__exam_question__add,
@@ -520,34 +431,18 @@ var exam_question = {
 		                 executor: top.basic_user.loginData.username
 		                ,session: top.basic_user.loginData.session
 		                
-						,data: $.ligerui.toJSON({
-							family: $.ligerui.get('family').getValue()
-
-							,time_in: $('#time_in').val()
-							,time_out: $('#time_out').val()
-							,name: $.ligerui.get('name').getValue()
-							,person_id: $.ligerui.get('person_id').getValue()
-							,types: $.ligerui.get('exam_question__types').getValue().replace(";",",")
-							,type: $.ligerui.get('exam_question__type').getValue()
-							,status: $.ligerui.get('exam_question__status').getValue()
-							,job: $.ligerui.get('job').getValue()
-							,job_code: $.ligerui.get('job_code').getValue()
-							,relation: $.ligerui.get('relation').getValue()
-							
-						})
+						,data: $.ligerui.toJSON(data)
 					},
 					type: "POST",
 					dataType: 'json',						
-					success: function(response) {		
-						//服务端添加成功,修改 AJAX 通信状态,修改按钮的文字信息,读取反馈信息
+					success: function(response) {	
 						if(response.status=="1"){
-							basic_user.ajaxState = false;
+							exam_question.ajaxState = false;
 							alert(top.getIl8n('done'));
 							$("#exam_question__submit").attr("value", top.getIl8n('submit') );
-						//服务端添加失败
 						}else{
 							alert(response.msg);
-							basic_user.ajaxState = false;
+							exam_question.ajaxState = false;
 							$("#exam_question__submit").remove();
 						}
 					},
@@ -555,21 +450,49 @@ var exam_question = {
 						alert(top.il8n.disConnect);
 					}
 				});	
+				
 			}
 		});
-		
-		$.ligerui.get('name').setValue("Person name");
-		$.ligerui.get('time_in').setValue("2013-05-01");
-		$.ligerui.get('time_out').setValue("2013-07-01");
-		$.ligerui.get('job').setValue("XXX软件公司当码畜");
-		$.ligerui.get('job_code').setValue("B");
-		$.ligerui.get('relation').setValue("00");
-		$.ligerui.get('exam_question__type').setValue("2");
-		$.ligerui.get('exam_question__status').setValue("1");
-		$.ligerui.get('exam_question__types').setValue("10;13");
 	}	
 	
-	//AJAX 通信状态,如果为TRUE,则表示服务端还在通信中	
+    ,addContent: function(inputid){
+        var win = top.$.ligerui.get("win_addContent");
+        if(win){                        
+            top.$.ligerui.win.addTask(win);
+            win.show();
+            var iframeDom = top.$.ligerui.get("win_addContent").frame;        
+            iframeDom.set($.ligerui.get('content').getValue());                        
+        }else{
+            win = top.$.ligerDialog.open({ 
+                  id : "win_addContent"
+                  
+                , height: 500
+                , url: "FCK_addContent.html?rand="+Math.random()
+                , width: 750
+                
+                , isHidden: true 
+                , showMax: true
+                , showToggle: true
+                , showMin: true
+                , isResize: true
+                , modal: false
+                , slide: false
+                , buttons:[{
+	                text: top.getIl8n('save'), onclick: function(){
+	                         var iframeDom = top.$.ligerui.get("win_addContent").frame;        
+	                         iframeDom.save();
+	                         $.ligerui.get('inputid').setValue(top.myglobal.FCKCcontent);
+	                }
+                }]                                
+            });                
+        }
+        win.hide = function(){
+                top.$.ligerui.win.removeTask(this);
+                this._hideDialog();
+        };
+	}
+	
+
 	,ajaxState: false 	
 	,modify: function(){
 			
@@ -613,8 +536,8 @@ var exam_question = {
 				}
 			},
 			submitHandler: function () {
-				if(basic_user.ajaxState)return;
-				basic_user.ajaxState = true;
+				if(exam_question.ajaxState)return;
+				exam_question.ajaxState = true;
 				$("#exam_question__submit").attr("value",top.getIl8n('waitting'));
 				
 				var gisid = getParameter("gisid", window.location.toString() )
@@ -647,13 +570,13 @@ var exam_question = {
 					success: function(response) {		
 						//服务端添加成功,修改 AJAX 通信状态,修改按钮的文字信息,读取反馈信息
 						if(response.status=="1"){
-							basic_user.ajaxState = false;
+							exam_question.ajaxState = false;
 							alert(top.getIl8n('done'));
 							$("#exam_question__submit").attr("value", top.getIl8n('submit') );
 						//服务端添加失败
 						}else{
 							alert(response.msg);
-							basic_user.ajaxState = false;
+							exam_question.ajaxState = false;
 							$("#exam_question__submit").remove();
 						}
 					},
