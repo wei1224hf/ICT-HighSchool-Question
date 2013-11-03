@@ -42,6 +42,9 @@ public class exam_question {
 		else if (functionName.equals("loadConfig")) {
 			t_return = loadConfig();
 		}
+		else if (functionName.equals("paperView")) {
+			t_return = paperView();
+		}		
 		
 		return t_return;
 	} 
@@ -178,6 +181,19 @@ public class exam_question {
 
 		return t_return;
 	}	
+	
+	public static Hashtable paperView(){
+		Hashtable t_return = new Hashtable();
+		Hashtable t_data = new Hashtable();
+		t_data.put("title", "题库练习");
+		t_data.put("subject_name", "没有科目");
+		t_data.put("cost", "0");
+		t_data.put("count_question", "0");
+		t_data.put("creater_code", "admin");
+		t_data.put("cent", "0");
+		t_return.put("data", t_data);
+		return t_return;
+	}
 	
 	public static void main(String args[]){
 		Hashtable t = exam_question.grid("{}", "20", "1", "", "id", "desc");
