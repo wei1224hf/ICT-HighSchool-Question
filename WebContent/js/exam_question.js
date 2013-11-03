@@ -11,6 +11,15 @@ var exam_question = {
                 ,session: top.basic_user.loginData.session
 	        } 			
 			,success : function(response) {
+				response.types = [
+				                  {code:"1",value:"单选题"},
+				                  {code:"2",value:"多选题"},
+				                  {code:"3",value:"判断题"},
+				                  {code:"4",value:"填空"},
+				                  {code:"5",value:"组合"},
+				                  {code:"6",value:"简答"},
+				                  {code:"7",value:"题纲"}
+	            ];
 				exam_question.config = response;
 				if ( typeof(afterAjax) == "string" ){
 					eval(afterAjax);
@@ -35,8 +44,8 @@ var exam_question = {
 				,height:'100%'
 				,pageSizeOptions: [10, 20, 30, 40, 50 ,2000]
 				,columns: [
-				     { display: getIl8n("id"), name: 'id', isSort: true, hide:true }
-				     ,{ display: getIl8n("exam_question","subject"), name: 'subject_code', width: 100,
+				     { display: top.getIl8n("id"), name: 'id', isSort: true, hide:true }
+				     ,{ display: top.getIl8n("exam_question","subject"), name: 'subject_code', width: 100,
 				    	 render: function(a,b,c,d){
 				    		 for(var i=0;i<exam_question.config.exam_subject.length;i++){
 				    			 var item = exam_question.config.exam_subject[i];
@@ -45,9 +54,9 @@ var exam_question = {
 				    			 }
 				    		 }
 				    	 }}
-				    ,{ display: getIl8n("title"), name: 'title', width: 250 }
-				    ,{ display: getIl8n("type"), name: 'type_', width: 100 }
-				    ,{ display: getIl8n("exam_question","difficulty"), name: 'difficulty', width: 100 }
+				    ,{ display: top.getIl8n("title"), name: 'title', width: 250 }
+				    ,{ display: top.getIl8n("type"), name: 'type_', width: 100 }
+				    ,{ display: top.getIl8n("exam_question","difficulty"), name: 'difficulty', width: 100 }
 			    
 				],  pageSize:20 ,rownumbers:true
 				,parms : {
@@ -69,11 +78,13 @@ var exam_question = {
 		//配置列表表头的按钮,根据当前用户的权限来初始化
 		var permission = [
 		     {code:"600701",name:"查询"}
+		     /*
 		    ,{code:"600702",name:"查看"}
 		    ,{code:"600711",name:"导入"}
 		    ,{code:"600712",name:"导出"}
 		    ,{code:"600713",name:"word导出"}
 		    ,{code:"600722",name:"修改"}
+		    */
 		    ,{code:"600723",name:"删除"}
 		    ,{code:"600790",name:"练习"}		    
 		];
@@ -275,9 +286,7 @@ var exam_question = {
 			$.ajax({
 				url: config_path__exam_question__remove,
 				data: {
-					ids: ids 
-					
-					//服务端权限验证所需
+					 ids: ids 
 	                ,executor: top.basic_user.loginData.username
 	                ,session: top.basic_user.loginData.session
 				}
@@ -290,8 +299,7 @@ var exam_question = {
 						alert(response.msg);
 					}
 				},
-				error : function(){
-					
+				error : function(){					
 					alert(top.getIl8n('disConnect'));
 				}
 			});				
@@ -366,66 +374,6 @@ var exam_question = {
 			}
 		});	
 	}
-	
-	,addPerson: function(){
-		var win = top.$.ligerui.get("win_addPerson");
-		if(win){			
-			top.$.ligerui.win.addTask(win);
-			win.show();
-		}else{
-			win = top.$.ligerDialog.open({ 
-				  id : "win_addPerson"
-				  
-				, height: 500
-				, url: "oa_person__add.html"
-				, width: 700
-				
-				, isHidden: true 
-				, showMax: true
-				, showToggle: true
-				, showMin: true
-				, isResize: true
-				, modal: false
-				, title: "add person"
-				, slide: false
-				
-			});		
-		}
-		
-		win.hide = function(){				
-			$.ligerui.get('person_id').setValue(top.myglobal.personid);
-			top.$.ligerui.win.removeTask(this);
-			this._hideDialog();
-		};
-	}
-	
-	,modifyPerson: function(){
-		var win = top.$.ligerDialog.open({ 
-			  id : "win_modifyPerson"
-			  
-			, height: 500
-			, url: "oa_person__modify.html?id="+$('#person_id').val()
-			, width: 700
-			
-			, isHidden: false 
-			, showMax: true
-			, showToggle: true
-			, showMin: true
-			, isResize: true
-			, modal: false
-			, title: "modify person"
-			, slide: false
-			
-		});	
-		
-		win.close = function(){
-			top.$.ligerui.win.removeTask(this);
-			this.unmask();
-			this._removeDialog();
-			top.$.ligerui.remove(win);
-		}	
-
-	}	
 		
 	/**
 	 * 添加一个用户
@@ -760,17 +708,14 @@ var exam_question = {
 			formD = $.ligerui.get("formD");
 			formD.show();
 		}else{
-			var form = $("<form id='form'></form>");
+			var form = $("<form id='search_from'></form>");
 			$(form).ligerForm({
 				inputWidth: 170
 				,labelWidth: 90
 				,space: 40
 				,fields: [
-					 { display: top.getIl8n('type'), name: "exam_question__search_type", newline: true, type: "select", options :{data : exam_question.config.exam_question__type, valueField : "code" , textField: "value" } }
-					,{ display: top.getIl8n('status'), name: "exam_question__search_status", newline: true, type: "select", options :{data : exam_question.config.exam_question__status , valueField : "code" , textField: "value" } }
-					,{ display: top.getIl8n('exam_question','zone_10'), name: "exam_question__search_zone_10", newline: true, type: "select", options :{data : exam_question.config.zone_10 , valueField : "code" , textField: "value" } }					
-					
-					,{ display: top.getIl8n('name'), name: "exam_question__search_name", newline: true, type: "text" }
+					 { display: top.getIl8n('type'), name: "search___type", newline: true, type: "select", options :{data : exam_question.config.types, valueField : "code" , textField: "value" } }			
+					,{ display: top.getIl8n("exam_question","subject"), name: "search___exam_subject", newline: true, type: "select", options :{data : exam_question.config.exam_subject, valueField : "code" , textField: "value" } }			
 				]
 			}); 
 			$.ligerDialog.open({
@@ -781,28 +726,32 @@ var exam_question = {
 				,title: top.getIl8n('search')
 				,buttons : [
 				    //清空查询条件
-					{text: top.getIl8n('basic_user','clear'), onclick:function(){
+					{text: top.getIl8n('clear'), onclick:function(){
 						$.ligerui.get("exam_question__grid").options.parms.search = "{}";
 						$.ligerui.get("exam_question__grid").loadData();
-						
-						$.ligerui.get("exam_question__search_type").setValue('');
-						$.ligerui.get("exam_question__search_zone_10").setValue('');
-						$.ligerui.get("exam_question__search_status").setValue('');
-						$.ligerui.get("exam_question__search_name").setValue('');
+
+						var doms = $("input[type='text']",$('#search_from'));
+						for(var i=0;i<doms.length;i++){
+							var theid = $(doms[i]).attr('id');
+							$.ligerui.get(theid).setValue("");
+						}
 					}},
 					//提交查询条件
-				    {text: top.getIl8n('basic_user','search'), onclick:function(){
+				    {text: top.getIl8n('search'), onclick:function(){
 						var data = {};
-						var  name =		$.ligerui.get("exam_question__search_name").getValue()
-						 	,type = 		$.ligerui.get("exam_question__search_type").getValue()
-						 	,zone_10 = 		$.ligerui.get("exam_question__search_zone_10").getValue()
-						 	,status = 		$.ligerui.get("exam_question__search_status").getValue()
-						 	;
 						
-						if(name!="")data.name = name;
-						if(type!="")data.type = type;
-						if(zone_10!="")data.zone_10 = zone_10;
-						if(status!="")data.status = status;
+						var doms = $("input[type='text']",$('#search_from'));
+						for(var i=0;i<doms.length;i++){
+							var theid = $(doms[i]).attr('id');
+							var thekey = theid.replace('search___',"");
+							var thetype = $(doms[i]).attr('ltype');							
+						
+							var thevalue = $.ligerui.get(theid).getValue();
+							if(thetype=='date')thevalue = $('#'+theid).val();
+							if(thevalue!="" && thevalue!=0 && thevalue!="0" && thevalue!=null){
+								eval("data."+thekey+"='"+thevalue+"'");
+							}
+						}
 						
 						$.ligerui.get("exam_question__grid").options.parms.search= $.ligerui.toJSON(data);
 						$.ligerui.get("exam_question__grid").loadData();

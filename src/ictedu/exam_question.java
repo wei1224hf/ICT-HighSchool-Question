@@ -45,7 +45,13 @@ public class exam_question {
 		else if (functionName.equals("readQuestions")) {
 			String ids = (String) request.getParameter("ids");
 			t_return = readQuestions(ids);
-		}		
+		}	
+		else if(functionName.equals("remove")){
+			t_return = remove(
+					(String)request.getParameter("ids"),
+					executor
+					);						
+		}
 		
 		return t_return;
 	} 
@@ -56,10 +62,12 @@ public class exam_question {
 		Statement stmt = null;
 		ResultSet rset = null;
 		ArrayList a = null;
+		String sql = null;
 		
 		try {
 			stmt = conn.createStatement();
-			String sql = "select code,title as value from exam_subject ";
+			
+			sql = "select code,title as value from exam_subject ";
 			rset = stmt.executeQuery(sql);
 			a = new ArrayList();
 			while (rset.next()) {			
@@ -68,7 +76,8 @@ public class exam_question {
 				t.put("value", rset.getString("value"));			
 				a.add(t);
 			}
-			t_return.put("exam_subject", a);	
+			t_return.put("exam_subject", a);
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			t_return.put("msg", e.toString());		
@@ -88,35 +97,19 @@ public class exam_question {
 			,String executor
 			,String group_code
 			){
-		String where = " where 1=1 ";
+		String where = " where id>0 ";
 
 		Hashtable search_t = (Hashtable) new Gson().fromJson(search, Hashtable.class);
 		for (Iterator it = search_t.keySet().iterator(); it.hasNext();) {
 			String key = (String) it.next();
 			Object value = search_t.get(key);
-			if(key.equals("name")){
-				where += " and government_resident.name like '%"+value+"%'";
+			if(key.equals("exam_subject")){
+				where += " and subject_code = '"+value+"'";
 			}
-			if(key.equals("type")){
-				where += " and government_resident.type = '"+value+"'";
+			else if(key.equals("type")){
+				where += " and type = '"+value+"'";
 			}
-			if(key.equals("status")){
-				where += " and government_resident.status = '"+value+"'";
-			}
-			if(key.equals("zone_10")){
-				where += " and government_resident.code like '"+value+"%'";
-			}
-			if(key.equals("building")){
-				where += " and government_resident.code like '"+value+"%'";
-			}		
-			if(key.equals("family")){
-				where += " and government_resident.code like '"+value+"%'";
-			}
-		}
-		
-		if(group_code.length()>2){//非系统用户
-			String[] group_code_ = group_code.split("-");
-			where += " and government_resident.code like '"+group_code_[0]+"%'";
+			
 		}
 		
 		return where;
@@ -146,7 +139,7 @@ public class exam_question {
 		Connection conn = tools.getConn();
 		ArrayList a_rows = new ArrayList();
 		try {
-			stmt = tools.getConn().createStatement();
+			stmt = conn.createStatement();
 			System.out.println(sql);
 			rest = stmt.executeQuery(sql);
 			ResultSetMetaData rsData = rest.getMetaData();
@@ -163,7 +156,9 @@ public class exam_question {
 						t.put(rsData.getColumnLabel(i), "-");
 					}
 				}
-				t.put("type_", types[Integer.valueOf((String)t.get("type"))-1] );
+				if(!((String)t.get("type")).equals("-")){
+					t.put("type_", types[Integer.valueOf((String)t.get("type"))-1] );
+				}
 				a_rows.add(t);
 			}
 			t_return.put("Rows", a_rows);
@@ -182,6 +177,33 @@ public class exam_question {
 
 		return t_return;
 	}	
+	
+	public static Hashtable remove(String ids,String executor){
+		Hashtable t_return = new Hashtable();
+		Statement stmt = null;
+		ResultSet rest = null;
+		Connection conn = tools.getConn();
+		String[] id = ids.split(",");
+		String sql = "";
+		
+		try {
+			stmt = conn.createStatement();
+			for(int i=0;i<id.length;i++){
+				sql = "delete from exam_question where id = '"+id[i]+"' ;";
+				stmt.executeUpdate(sql);
+			}	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+            try { if (rest != null) rest.close(); } catch(Exception ex) { }
+            try { if (stmt != null) stmt.close(); } catch(Exception ex) { }
+            try { if (conn != null) conn.close(); } catch(Exception ex) { }
+        }
+	
+		t_return.put("status", "1");
+		t_return.put("msg", "ok");
+		return t_return;
+	}
 	
 	public static Hashtable readQuestions(String ids){
 		Hashtable t_return = new Hashtable();

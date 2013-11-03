@@ -27,11 +27,8 @@ public class tools {
 			String driver = "com.hxtt.sql.excel.ExcelDriver";
 			Class.forName(driver).newInstance();  
 			String protocol = "jdbc:excel";  
-			String database = tools.getConfigItem("APPPATH")+""+tools.getConfigItem("PAPER_FILE_PATH");  
-			
+			String database = tools.getConfigItem("PAPER_FILE_PATH");  
 			String url = protocol + ":/" + database;
-			//url= url.replace("\\", "\\\\");
-			System.out.println(url);
 			conn = DriverManager.getConnection(url);
 		} catch (SQLException e) {
 			e.printStackTrace();
