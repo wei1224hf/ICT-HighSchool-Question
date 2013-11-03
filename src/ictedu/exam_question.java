@@ -42,8 +42,9 @@ public class exam_question {
 		else if (functionName.equals("loadConfig")) {
 			t_return = loadConfig();
 		}
-		else if (functionName.equals("paperView")) {
-			t_return = paperView();
+		else if (functionName.equals("readQuestions")) {
+			String ids = (String) request.getParameter("ids");
+			t_return = readQuestions(ids);
 		}		
 		
 		return t_return;
@@ -182,16 +183,39 @@ public class exam_question {
 		return t_return;
 	}	
 	
-	public static Hashtable paperView(){
+	public static Hashtable readQuestions(String ids){
 		Hashtable t_return = new Hashtable();
-		Hashtable t_data = new Hashtable();
-		t_data.put("title", "题库练习");
-		t_data.put("subject_name", "没有科目");
-		t_data.put("cost", "0");
-		t_data.put("count_question", "0");
-		t_data.put("creater_code", "admin");
-		t_data.put("cent", "0");
-		t_return.put("data", t_data);
+		String sql = "select * from exam_question where id in ("+ids+") order by id";
+		Statement stmt = null;
+		ResultSet rest = null;
+		Connection conn = tools.getConn();
+		ArrayList a_rows = new ArrayList();
+		try {
+			stmt = tools.getConn().createStatement();
+			System.out.println(sql);
+			rest = stmt.executeQuery(sql);
+			ResultSetMetaData rsData = rest.getMetaData();
+			while (rest.next()) {
+				Hashtable t = new Hashtable();	
+				for(int i=1;i<=rsData.getColumnCount();i++){
+					if(rest.getString(rsData.getColumnLabel(i)) != null){
+						t.put(rsData.getColumnLabel(i), rest.getString(rsData.getColumnLabel(i)));
+					}else{
+						t.put(rsData.getColumnLabel(i), "-");
+					}
+				}
+				t.put("title", ((String)t.get("title")).replace("\n", "<br/>"));
+				a_rows.add(t);
+			}
+			t_return.put("Rows", a_rows);
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+            try { if (rest != null) rest.close(); } catch(Exception ex) { }
+            try { if (stmt != null) stmt.close(); } catch(Exception ex) { }
+            try { if (conn != null) conn.close(); } catch(Exception ex) { }
+        }
 		return t_return;
 	}
 	

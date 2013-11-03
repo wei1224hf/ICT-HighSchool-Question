@@ -16,8 +16,9 @@ var question_choice = function(){
 	 * */
 	this.initDom = function() {
 		$("#wls_quiz_main").append("<div id='w_qs_" + this.id + "'></div>");
-		if( !(this.path_img==null||this.path_img==''||this.path_img=='0') ){
-			this.title = "<img src='"+this.path_img+"' /><br/>" + this.title;
+		if( !(this.path_img==null||this.path_img==''||this.path_img=='0'||this.path_img=='-') ){
+			var str_img = "<img src='"+this.path_img+"' /><br/>" ;
+			this.title += str_img;
 		}
 		//备选答案是 水平排列的,比如完型填空题中的选择题,使用 SPAN 标签
 		if(this.layout == '1'){
@@ -61,6 +62,7 @@ var question_choice = function(){
 				$(".w_qw_options", "#w_qs_" + this.id).append(str);
 			}
 		}
+		
 	};	
 	
 	/* 如果做对了,题目导航处变蓝

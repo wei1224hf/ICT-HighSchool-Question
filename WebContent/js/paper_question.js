@@ -13,7 +13,7 @@ paper_question.readQuestions = function(afterAjax){
         },
         dataType: 'json',
         success : function(responseData) {
-            paperObj.questions = responseData
+            paperObj.questions = responseData.Rows
             
             if ( typeof(afterAjax) == "string" ){
                 eval(afterAjax);

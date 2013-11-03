@@ -2,8 +2,9 @@ var question_big = function(){
 	this.initDom = function() {
 		$("#wls_quiz_main").append("<div id='w_qs_" + this.id
 				+ "'></div>");
-		if( !(this.path_img==null||this.path_img=='' || (typeof(this.path_img))=='undefined'||this.path_img=='0'||this.path_img==0) ){
-			this.title =  this.title + "<br/><img src='"+this.path_img+"' />";
+		if( !(this.path_img==null||this.path_img==''||this.path_img=='0'||this.path_img=='-') ){
+			var str_img = "<img src='"+this.path_img+"' /><br/>" ;
+			this.title += str_img;
 		}
 		if( !(this.path_listen==null||this.path_listen=='' || (typeof(this.path_listen))=='undefined'||this.path_listen=='0'||this.path_listen==0) ){
 			
