@@ -467,7 +467,7 @@ var exam_question = {
                   id : "win_addContent"
                   
                 , height: 500
-                , url: "FCK_addContent.html?rand="+Math.random()
+                , url: "FCKeditor.html?rand="+Math.random()
                 , width: 750
                 
                 , isHidden: true 
@@ -477,11 +477,12 @@ var exam_question = {
                 , isResize: true
                 , modal: false
                 , slide: false
+                , title: top.getIl8n('contentEditor')
                 , buttons:[{
 	                text: top.getIl8n('save'), onclick: function(){
 	                         var iframeDom = top.$.ligerui.get("win_addContent").frame;        
 	                         iframeDom.save();
-	                         $.ligerui.get('inputid').setValue(top.myglobal.FCKCcontent);
+	                         $.ligerui.get(inputid).setValue(top.myglobal.FCKCcontent);
 	                }
                 }]                                
             });                

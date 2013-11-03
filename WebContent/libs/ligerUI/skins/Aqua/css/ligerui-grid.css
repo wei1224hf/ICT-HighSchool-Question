@@ -1,6 +1,6 @@
-Ôªø
+
 /* -----------------------
-   * Ë°®Ê†º *
+   * ±Ì∏Ò *
 * ----------------------- */
 .l-grid-mask{
 	position:absolute;left:0;top:0;width:100%;height:100%; 
@@ -50,10 +50,12 @@ background: url('../images/panel/header-bg.gif') repeat-x left -1px; position:re
 {
   position:relative; overflow:hidden; width:100%;
 }
-
+/*
 .l-panel .l-toolbar {
 	background:none;border:0;
 }
+*/
+
 .l-panel-topbar {
 	padding:0;
 }
@@ -510,7 +512,7 @@ background: url(../images/icon/icon-loading.gif) no-repeat; background-position:
     border-right: 1px solid #DDDDDD;   
 }
 /*
-    ËèúÂçïÊù°
+    ≤Àµ•Ãı
 */
 .l-menubar
 {
@@ -530,12 +532,12 @@ background: url(../images/icon/icon-loading.gif) no-repeat; background-position:
 { 
 }
 /*
-    Â∑•ÂÖ∑Êù°
+    π§æﬂÃı
 */
 .l-toolbar
 {    
     background:#CEDFEF  url('../images/panel/panel-toolbar.gif') repeat-x; height:23px; 
-    border:1px solid #9CBAE7;  border-top:1px solid #EFF7F7;
+    border:1px solid #9CBAE7;  border-top:1px solid #EFF7F7;width: 100%;
 }
 .l-toolbar-item
 {
@@ -548,7 +550,7 @@ background: url(../images/icon/icon-loading.gif) no-repeat; background-position:
 .l-toolbar-item-disable span{color: #A1A1A1;}
 .l-toolbar-item-color{border: 1px solid #ccc;position: absolute;width: 14px;height: 14px;left: 3px;top: 3px;}
 /*
-    ÊêúÁ¥¢Ê†è
+    À—À˜¿∏
 */
 .l-panel-search
 {height:28px; padding-top:3px; padding-left:3px; 
@@ -560,7 +562,7 @@ background: url(../images/icon/icon-loading.gif) no-repeat; background-position:
 }
 
 /*
-    ÁºñËæë
+    ±‡º≠
 */
 .l-grid-row-cell-editing-topcell {border-bottom-color:#CC8F81;}
 .l-grid-row-cell-editing-leftcell {border-right-color:#CC8F81;}

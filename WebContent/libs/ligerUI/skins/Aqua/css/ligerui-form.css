@@ -1,4 +1,4 @@
-ï»¿ /* è¡¨å• */
+ /* ±íµ¥ */
 .l-form { margin:7px;overflow:hidden;}
 .l-form .l-group{ clear:both; margin:0; height:28px; line-height:28px; font-weight:bold; font-size:12px; color:#333; border-bottom:solid 1px #ebebeb; padding-top:5px;margin-bottom:10px; display:block; position:relative; clear:both;}
 .l-group span{float:left;width:90px;}
@@ -25,44 +25,44 @@
 	overflow: hidden;
 }
 /* -------------
-   * å¤šè¡Œæ–‡æœ¬æ¡†é¢œè‰² *
+   * ¶àĞĞÎÄ±¾¿òÑÕÉ« *
 * ------------- */ 
 .l-textarea{border:1px solid #A8AAAD; margin-left:-1px;outline:none;}
  .l-textarea:hover{border-color:#01AAEE;}
 .l-textarea-invalid,.l-textarea:focus{ border-color:#FF8801;}
-.l-textarea-invalid{border-color:#FF7777; background:#FFEEEE url(../image/common/invalid-line.gif) repeat-x bottom;}
+.l-textarea-invalid{border-color:#FF7777; background:#FFEEEE url(../images/common/invalid-line.gif) repeat-x bottom;}
 .l-textarea-invalid:hover,.l-textarea-invalid:focus{border-color:#FF7777;}
 /* -------------
-   * æ–‡æœ¬æ¡†/ä¸‹æ‹‰æ¡†/æ—¥æœŸæ¡†/è°ƒæ•´å™¨ *
+   * ÎÄ±¾¿ò/ÏÂÀ­¿ò/ÈÕÆÚ¿ò/µ÷ÕûÆ÷ *
 * ------------- */
 .l-text-wrapper{ position:relative;}
-/* æ–‡æœ¬æ¡†ã€ä¸‹æ¥æ¡†ã€æ—¥æœŸæ¡†ã€è°ƒæ•´å™¨éƒ½ä½¿ç”¨åˆ°è¿™ä¸ª */
+/* ÎÄ±¾¿ò¡¢ÏÂÀ´¿ò¡¢ÈÕÆÚ¿ò¡¢µ÷ÕûÆ÷¶¼Ê¹ÓÃµ½Õâ¸ö */
 .l-text
 {
     position:relative;
     border:1px solid #AECAF0; height:20px; line-height:20px;
     width:130px; background:white;
 }
-/* æ–‡æœ¬æ¡† éªŒè¯ä¸é€šè¿‡ */
-.l-text-invalid{ border-color:#FF7777; background:#FFEEEE url(../image/common/invalid-line.gif) repeat-x bottom;}
+/* ÎÄ±¾¿ò ÑéÖ¤²»Í¨¹ı */
+.l-text-invalid{ border-color:#FF7777; background:#FFEEEE url(../images/common/invalid-line.gif) repeat-x bottom;}
 
 .l-text-invalid .l-text-field{ background:none;}
-/*åªè¯»æ—¶è¾¹æ¡†*/
+/*Ö»¶ÁÊ±±ß¿ò*/
 .l-text-disabled
 {
     border-color:#C2C2C2;
     background:#E0E0E0;
 }
-/*åªè¯»æ—¶æ–‡æœ¬æ¡†*/
+/*Ö»¶ÁÊ±ÎÄ±¾¿ò*/
 .l-text-disabled .l-text-field{
 	background:#E0E0E0;
 }
-/* ç¼–è¾‘çŠ¶æ€ */
+/* ±à¼­×´Ì¬ */
 .l-text-editing
 {
      
 }
-/* åªè¯»çŠ¶æ€*/
+/* Ö»¶Á×´Ì¬*/
 .l-text-readonly {
 	background:none; border:0; margin:2px;
 	border-bottom:1px solid #b1b1b1;
@@ -77,7 +77,7 @@
 {
     display:none; cursor:auto;
 }
-/* è¡¨å•æ–‡æœ¬æ¡† input:text */
+/* ±íµ¥ÎÄ±¾¿ò input:text */
 .l-text-field
 {
     position:absolute; top:0px; left:0px;
@@ -88,12 +88,12 @@
 .l-text-field-number {
 	text-align: right;
 }
-/* è¡¨å•æ–‡æœ¬æ¡† å†…å®¹ä¸ºç©ºæ—¶ */
+/* ±íµ¥ÎÄ±¾¿ò ÄÚÈİÎª¿ÕÊ± */
 .l-text-field-null
 { color:#C1C1C1;
 }
 
-/* ä¸‹æ‹‰æ¡†/æ—¥æœŸ/è°ƒæ•´å™¨ å³ä¾§é‚£ä¸ªå¯ç‚¹å‡»çš„åŒºåŸŸ åˆ†åˆ«æ˜¯æ™®é€šã€ç»è¿‡ã€æŒ‰ä½çŠ¶æ€ */
+/* ÏÂÀ­¿ò/ÈÕÆÚ/µ÷ÕûÆ÷ ÓÒ²àÄÇ¸ö¿Éµã»÷µÄÇøÓò ·Ö±ğÊÇÆÕÍ¨¡¢¾­¹ı¡¢°´×¡×´Ì¬ */
 .l-trigger,.l-trigger-hover,.l-trigger-pressed
 {
     cursor:pointer;
@@ -139,7 +139,7 @@
 }
 
 
-/* ä¸‹æ‹‰æ¡†/æ—¥æœŸ å–æ¶ˆé€‰æ‹© */
+/* ÏÂÀ­¿ò/ÈÕÆÚ È¡ÏûÑ¡Ôñ */
 .l-trigger-cancel {
 	right:20px; background:transparent; border:0px;
 }
@@ -152,14 +152,14 @@
 .l-text-date .l-trigger-icon { 
 	background-image: url('../images/dateeditor/date.gif');
 } 
-/* ä¸‹æ‹‰æ¡†/æ—¥æœŸ å³ä¾§é‚£ä¸ªå¯ç‚¹å‡»çš„åŒºåŸŸé‡Œé¢çš„å›¾æ ‡ */
+/* ÏÂÀ­¿ò/ÈÕÆÚ ÓÒ²àÄÇ¸ö¿Éµã»÷µÄÇøÓòÀïÃæµÄÍ¼±ê */
 .l-trigger-icon
 {	width:100%;
 	height:100%;
     background:url('../images/icon/icon-down.gif') no-repeat 50% 50%;
 }
 /* -------------
-  * è°ƒæ•´å™¨ *
+  * µ÷ÕûÆ÷ *
 * ------------- */
 .l-spinner-up .l-spinner-icon,.l-spinner-down .l-spinner-icon{overflow: hidden;position: absolute;left: 0px;top: 50%;margin-top: -3px;width: 100%;height: 6px;background: no-repeat center top;}
 .l-spinner-down-over,.l-spinner-up-over{background:#fedc75 url('../images/controls/bg-trigger-over.gif') repeat-x left;}
@@ -170,12 +170,12 @@
 .l-spinner-split{overflow: hidden;width: 13px;height: 1px;position: absolute;left: 1px;top: 50%;z-index: 10;background: #B5B8C8;   }
 
 /* -------------
-   * éªŒè¯ *
+   * ÑéÖ¤ *
 * ------------- */
 .l-verify-star { color:Red;}
 .l-star { color:Red;}
 /* -------------
-  * ä¸‹æ‹‰æ¡† *
+  * ÏÂÀ­¿ò *
 * ------------- */
 .l-box-select
 {
@@ -247,7 +247,7 @@ background:#DBEBFF url('../images/controls/bg-panel-title.gif') repeat-x left; b
 .l-checkboxlist-disabled td {
 	color:#ccc
 }
-/* ä¸‹æ‹‰æ¡† å³ä¸‹è§’è°ƒæ•´å¤§å°å›¾æ ‡ */
+/* ÏÂÀ­¿ò ÓÒÏÂ½Çµ÷Õû´óĞ¡Í¼±ê */
 .l-btn-nw-drop
 {
     position:absolute;
@@ -256,7 +256,7 @@ background:#DBEBFF url('../images/controls/bg-panel-title.gif') repeat-x left; b
 }
 
 /* -------------
-    * å¤é€‰æ¡† *
+    * ¸´Ñ¡¿ò *
 * ------------- */
 .l-checkbox-wrapper{
 	display: -moz-inline-stack;display:inline-block; zoom: 1;*display: inline;margin:0 auto;margin-right:2px; padding:0;}
@@ -291,7 +291,7 @@ a.l-checkbox-checked
     background-position:-13px -13px;
 }
 /* -------------
-    * å•é€‰æ¡† *
+    * µ¥Ñ¡¿ò *
 * ------------- */
 .l-radio-wrapper{
 	display: -moz-inline-stack;display:inline-block; zoom: 1;*display: inline; margin-right:2px;
@@ -327,7 +327,7 @@ div.l-disabled a.l-radio-checked
     background-position:-13px -13px;
 }
 /* -----------------------
-   *   æ—¥æœŸæ§ä»¶ *
+   *   ÈÕÆÚ¿Ø¼ş *
 * ----------------------- */
 .l-box-dateeditor
 {
@@ -417,7 +417,7 @@ div.l-disabled a.l-radio-checked
 .l-highLight {background:#FFD144;
 }
 /* -----------------------
-   *   éªŒè¯ *
+   *   ÑéÖ¤ *
 * ----------------------- */
 .l-validate-error{color:red;}
 .l-validate-warn{color:orange;}
@@ -428,7 +428,7 @@ div.l-disabled a.l-radio-checked
 .l-exclamation{ width:16px; height:16px; overflow:hidden; display:block; background:url('../images/common/exclamation.gif') no-repeat;}
 
 /* -----------------------
-   *   æ–‡ä»¶æ¡† *
+   *   ÎÄ¼ş¿ò *
 * ----------------------- */
 .l-file{}
 .l-file a{padding-right:10px;}
