@@ -24,9 +24,9 @@ public class tools {
 	public static Connection getExcelConn(){
 		Connection conn = null;
 		try {
-			String driver = "com.hxtt.sql.excel.ExcelDriver";
+			String driver = "com.googlecode.sqlsheet.Driver";
 			Class.forName(driver).newInstance();  
-			String protocol = "jdbc:excel";  
+			String protocol = "jdbc:xls:file";  
 			String database = tools.getConfigItem("PAPER_FILE_PATH");  
 			String url = protocol + ":/" + database;
 			conn = DriverManager.getConnection(url);
@@ -380,7 +380,7 @@ public class tools {
 		Connection conn = tools.getExcelConn();
 		try {
 			Statement stmt = conn.createStatement();
-			String sql = "select * from exam_question";
+			String sql = "select * from exam_question ";
 			ResultSet rest = stmt.executeQuery(sql);
 			while(rest.next()){
 				System.out.println(rest.getString("id")+" "+rest.getString("id_parent")+" "+rest.getString("title"));

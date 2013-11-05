@@ -318,7 +318,7 @@ var getTheSession = function(){
 
 var myglobal = {
 	 personid : 0
-	,FCKCcontent: ""
+	,content_editor: ""
 	,searchUserName:""
 	,searchUserGroupCode:""
 	,group_weight__data: []
